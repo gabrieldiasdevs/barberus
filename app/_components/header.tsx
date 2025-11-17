@@ -29,7 +29,7 @@ const Header = () => {
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[85%] max-w-[370px] p-0">
+          <SheetContent className="w-[95%] max-w-[370px] p-0">
             <SheetHeader className="border-b px-5 py-6 text-left">
               <SheetTitle className="text-lg font-bold">Menu</SheetTitle>
             </SheetHeader>

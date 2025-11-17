@@ -8,8 +8,7 @@ import { Avatar, AvatarImage } from "../../_components/ui/avatar";
 import { PageContainer, PageSectionTitle } from "@/app/_components/ui/page";
 import { Separator } from "../../_components/ui/separator";
 import Footer from "@/app/_components/footer";
-import { Badge } from "../../_components/ui/badge";
-import ServiceItem from "../../_components/service-item";
+import { ServiceItem } from "../../_components/service-item";
 import { PhoneItem } from "../../_components/phone-item";
 
 const BarbershopPage = async (props: PageProps<"/barbershops/[id]">) => {
@@ -66,7 +65,7 @@ const BarbershopPage = async (props: PageProps<"/barbershops/[id]">) => {
       <div className="space-y-3 p-5">
         <PageSectionTitle>Serviços</PageSectionTitle>
         {barbershop.services.map((service) => (
-          <ServiceItem key={service.id} service={service} />
+          <ServiceItem key={service.id} service={{ ...service, barbershop }} />
         ))}
       </div>
       <Separator className="bg-zinc-100" />
