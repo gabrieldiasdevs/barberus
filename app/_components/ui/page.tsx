@@ -15,7 +15,7 @@ export const PageSectionTitle = ({
 };
 
 export const PageSection = ({ children }: { children: React.ReactNode }) => {
-  return <h2 className="space-y-3">{children}</h2>;
+  return <div className="space-y-3">{children}</div>;
 };
 
 export const PageSectionScroller = ({
