@@ -17,6 +17,8 @@ import { ptBR } from "date-fns/locale";
 import { useAction } from "next-safe-action/hooks";
 import { createBooking } from "../_actions/create-booking";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { getDateAvailableTimeSlots } from "../_actions/get-date-available-time-slots";
 
 interface ServiceItemProps {
   service: BarbershopService & {
@@ -29,11 +31,14 @@ export function ServiceItem({ service }: ServiceItemProps) {
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
   const { executeAsync, isPending } = useAction(createBooking);
-
-  const fixedTimeSlots = Array.from({ length: 21 }).map((_, i) => {
-    const hour = 8 + Math.floor(i / 2);
-    const minute = i % 2 === 0 ? "00" : "30";
-    return `${String(hour).padStart(2, "0")}:${minute}`;
+  const { data: availableTimeSlots } = useQuery({
+    queryKey: ["date-available-time-slots", service.barbershopId, selectedDate],
+    queryFn: () =>
+      getDateAvailableTimeSlots({
+        barbershopId: service.barbershopId,
+        date: selectedDate!,
+      }),
+    enabled: Boolean(selectedDate),
   });
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -125,7 +130,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
           </SheetHeader>
 
           <div className="flex flex-col gap-4 px-5">
-            <Calendar
+          <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
@@ -140,11 +145,11 @@ export function ServiceItem({ service }: ServiceItemProps) {
               <Separator />
 
               <div className="flex gap-3 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
-                {fixedTimeSlots.map((time) => (
+              {availableTimeSlots?.data?.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
-                    className="shrink-0 cursor-pointer rounded-full px-4 py-2"
+                    className="shrink-0 rounded-full px-4 py-2"
                     onClick={() => setSelectedTime(time)}
                   >
                     {time}
