@@ -51,7 +51,7 @@ const SidebarMenu = () => {
             </div>
             <Button
               onClick={handleLogin}
-              className="gap-3 rounded-full px-6 py-3"
+              className="cursor-pointer gap-3 rounded-full px-6 py-3"
             >
               <span className="text-sm font-semibold">Login</span>
               <LogInIcon className="size-4" />
@@ -124,16 +124,18 @@ const SidebarMenu = () => {
       </div>
       <Separator />
       <SheetClose asChild>
-        <Button
-          onClick={handleLogout}
-          variant="ghost"
-          className="w-full cursor-pointer justify-start gap-3 rounded-full px-5 py-3"
-        >
-          <LogOutIcon className="size-4" />
-          <span className="text-muted-foreground text-sm font-medium">
-            Sair da conta
-          </span>
-        </Button>
+        {session?.user && (
+          <Button
+            onClick={handleLogout}
+            variant="ghost"
+            className="w-full cursor-pointer justify-start gap-3 rounded-full px-5 py-3"
+          >
+            <LogOutIcon className="size-4" />
+            <span className="text-muted-foreground text-sm font-medium">
+              Sair da conta
+            </span>
+          </Button>
+        )}
       </SheetClose>
     </div>
   );

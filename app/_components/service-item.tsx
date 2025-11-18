@@ -14,6 +14,9 @@ import { Calendar } from "./ui/calendar";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
 import { ptBR } from "date-fns/locale";
+import { useAction } from "next-safe-action/hooks";
+import { createBooking } from "../_actions/create-booking";
+import { toast } from "sonner";
 
 interface ServiceItemProps {
   service: BarbershopService & {
@@ -25,6 +28,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
+  const { executeAsync, isPending } = useAction(createBooking);
 
   const fixedTimeSlots = Array.from({ length: 21 }).map((_, i) => {
     const hour = 8 + Math.floor(i / 2);
@@ -55,11 +59,25 @@ export function ServiceItem({ service }: ServiceItemProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const handleConfirm = () => {
-    alert(
-      `Reserva confirmada!\n\nServiço: ${service.name}\nData: ${formattedDate}\nHorário: ${selectedTime}`,
-    );
+  const handleConfirm = async () => {
+    if (!selectedTime || !selectedDate) {
+      return;
+    }
+    const timeSplitted = selectedTime?.split(":")[0];
+    const hours = timeSplitted[0];
+    const minutes = timeSplitted[1];
+    const date = new Date(selectedDate);
+    date.setHours(Number(hours), Number(minutes));
 
+    const result = await executeAsync({
+      serviceId: service.id,
+      date,
+    });
+    if (result.serverError || result.validationErrors) {
+      toast.error(result.validationErrors?._errors?.[0]);
+      return;
+    }
+    toast.success("Agendamento criado com sucesso!");
     setSelectedDate(undefined);
     setSelectedTime(undefined);
     setSheetIsOpen(false);
@@ -126,7 +144,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
-                    className="shrink-0 rounded-full px-4 py-2"
+                    className="shrink-0 cursor-pointer rounded-full px-4 py-2"
                     onClick={() => setSelectedTime(time)}
                   >
                     {time}
@@ -168,8 +186,8 @@ export function ServiceItem({ service }: ServiceItemProps) {
 
               <div className="px-5 pb-6">
                 <Button
-                  className="w-full rounded-full"
-                  disabled={isConfirmDisabled}
+                  className="w-full cursor-pointer rounded-full"
+                  disabled={isConfirmDisabled || isPending}
                   onClick={handleConfirm}
                 >
                   Confirmar
