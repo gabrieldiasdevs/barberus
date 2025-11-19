@@ -9,6 +9,8 @@ import {
   PageSection,
   PageSectionTitle,
 } from "../_components/ui/page";
+import { Button } from "../_components/ui/button";
+import Link from "next/link";
 import BookingItem from "../_components/booking-item";
 
 const BookingsPage = async () => {
@@ -73,9 +75,17 @@ const BookingsPage = async () => {
           )}
 
           {bookings.length === 0 && (
-            <p className="text-muted-foreground text-center text-sm">
-              Você ainda não tem agendamentos.
-            </p>
+            <div className="mt-6 flex flex-col items-center justify-center space-y-4">
+              <p className="text-muted-foreground text-center text-sm">
+                Você ainda não tem agendamentos.
+              </p>
+
+              <Link href="/">
+                <Button className="cursor-pointer rounded-full px-4 py-2 text-xs uppercase">
+                  Agendar agora
+                </Button>
+              </Link>
+            </div>
           )}
         </PageContainer>
       </div>

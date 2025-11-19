@@ -18,7 +18,6 @@ import { Button } from "./ui/button";
 import { useAction } from "next-safe-action/hooks";
 import { cancelBooking } from "../_actions/cancel-booking";
 import { toast } from "sonner";
-import { X } from "lucide-react";
 import { Separator } from "./ui/separator";
 import {
   AlertDialog,
@@ -92,7 +91,9 @@ const BookingItem = ({ booking }: BookingItemProps) => {
               className={
                 status === "confirmed"
                   ? "bg-primary/10 text-primary uppercase"
-                  : "bg-muted text-muted-foreground uppercase"
+                  : status === "cancelled"
+                    ? "bg-destructive/10 text-destructive uppercase"
+                    : "bg-muted text-muted-foreground uppercase"
               }
             >
               {status === "confirmed"
@@ -136,9 +137,8 @@ const BookingItem = ({ booking }: BookingItemProps) => {
             <SheetTitle>Informações da Reserva</SheetTitle>
           </div>
         </SheetHeader>
-
-        <div className="space-y-6 px-5 py-6">
-          {/* Imagem do mapa com informações da barbearia */}
+        <Separator />
+        <div className="space-y-6 px-5 py-3">
           <div className="relative h-[180px] w-full overflow-hidden rounded-lg">
             <Image
               src="/map.png"
@@ -217,7 +217,7 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         <div className="flex gap-3 px-5 pb-6">
           <Button
             variant="outline"
-            className="flex-1 rounded-full cursor-pointer"
+            className="flex-1 cursor-pointer rounded-full"
             onClick={() => setSheetIsOpen(false)}
           >
             Voltar
@@ -225,7 +225,10 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           {isConfirmed && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="flex-1 rounded-full cursor-pointer">
+                <Button
+                  variant="destructive"
+                  className="flex-1 cursor-pointer rounded-full"
+                >
                   Cancelar Reserva
                 </Button>
               </AlertDialogTrigger>
@@ -238,7 +241,9 @@ const BookingItem = ({ booking }: BookingItemProps) => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="cursor-pointer">Voltar</AlertDialogCancel>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Voltar
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleCancelBooking}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"

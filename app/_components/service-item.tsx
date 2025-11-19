@@ -68,12 +68,9 @@ export function ServiceItem({ service }: ServiceItemProps) {
     if (!selectedTime || !selectedDate) {
       return;
     }
-    const timeSplitted = selectedTime?.split(":")[0];
-    const hours = timeSplitted[0];
-    const minutes = timeSplitted[1];
+    const [hours, minutes] = selectedTime.split(":");
     const date = new Date(selectedDate);
-    date.setHours(Number(hours), Number(minutes));
-
+    date.setHours(Number(hours), Number(minutes), 0, 0);
     const result = await executeAsync({
       serviceId: service.id,
       date,
@@ -130,7 +127,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
           </SheetHeader>
 
           <div className="flex flex-col gap-4 px-5">
-          <Calendar
+            <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
@@ -145,7 +142,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
               <Separator />
 
               <div className="flex gap-3 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
-              {availableTimeSlots?.data?.map((time) => (
+                {availableTimeSlots?.data?.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
